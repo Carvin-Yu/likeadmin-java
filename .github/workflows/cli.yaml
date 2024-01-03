@@ -7,7 +7,7 @@ on:
       - master # 正式版本
   push:
     branches:
-      - 'feature/**'
+      - 'feature/*'
   workflow_dispatch: # 手动触发
 
 jobs:
