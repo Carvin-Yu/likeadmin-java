@@ -20,8 +20,10 @@ jobs:
     name: 测试
     runs-on: ubuntu-latest
     steps:
-      - name: 打印
-        run: echo ${{ github.event.pull_request }}
+      - name: 打印 pr 属性
+        run: |
+          echo github.event.pull_request.state: ${{ github.event.pull_request.state }}
+          echo github.event.action: ${{ github.event.action }}
   job2:
     name: 测试2
     runs-on: ubuntu-latest
