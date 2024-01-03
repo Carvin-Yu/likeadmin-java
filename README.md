@@ -1,4 +1,4 @@
- <h1 align="center">likeadmin通用管理后台（Java）</h1>
+ <h1 align="center">likeadmin通用管理后台（）</h1>
 <h4 align="center">🚀快速开发、🛠️ 一键生成代码、✅后台多端自适应、📱手机端uniapp前台</h4> 
 <p align="center">
  <div align="center">  <img  width="80%"  src="https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=9cf02b831e49d6a411bafbc4d79f51d4" /><br>
