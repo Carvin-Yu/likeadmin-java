@@ -1,10 +1,11 @@
-name: Merge any release branch to uat
+# Auto submit commit / push to pr
+name: 提交后自动创建PR请求
 on:
   push:
     branches:
       - 'feature/**'
 jobs:
-  merge-branch:
+  auto_pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
