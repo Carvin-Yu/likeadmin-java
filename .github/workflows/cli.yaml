@@ -5,12 +5,15 @@ on:
   pull_request:
     types:
       - opened
-      - review_requested
+      - edited
       - closed
+      - auto_merge_enabled
     branches:
       - master # 正式版本
       - priview # 预览标签
   push:
+    branches:
+      - 'priview/**'
   workflow_dispatch: # 手动触发
 
 jobs:
