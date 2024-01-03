@@ -8,11 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-
-      - name: Merge staging -> uat
-        uses: devmasx/merge-branch@master
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
         with:
-          type: now
-          target_branch: master
-          message: Merge staging into master
-          github_token: ${{ secrets.TOKEN_GITHUB }}
+          token: ${{ secrets.TOKEN_GITHUB }}
+          delete-branch: true
