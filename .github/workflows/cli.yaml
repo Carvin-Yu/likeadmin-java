@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 打印
-        run: echo "ok"
+        run: echo {{ github.event.pull_request }}
   job2:
     name: 测试2
     runs-on: ubuntu-latest
