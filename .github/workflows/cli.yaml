@@ -3,11 +3,6 @@ name: CI PR Merged
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
 on:
   pull_request:
-    types:
-      - opened
-      - edited
-      - closed
-      - auto_merge_enabled
     branches:
       - master # 正式版本
   push:
