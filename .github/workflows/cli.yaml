@@ -21,13 +21,6 @@ jobs:
           echo github.event.action: ${{ github.event.action }}
           echo test
           echo test1
-  job2:
-    name: 测试2
-    runs-on: ubuntu-latest
-    steps:
-      - name: 打印2
-        run: echo "ok2"
-
   job3:
   # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
     name: merge test
