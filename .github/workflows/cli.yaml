@@ -1,4 +1,4 @@
-name: CI PR Merged
+name: CI 自动测试提交
 # 该脚本仅在 PR MERGE 的时候进行测试，不建议 将测试结果上传到 github
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
 on:
