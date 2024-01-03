@@ -24,6 +24,7 @@ jobs:
         run: |
           echo github.event.pull_request.state: ${{ github.event.pull_request.state }}
           echo github.event.action: ${{ github.event.action }}
+          echo test
   job2:
     name: 测试2
     runs-on: ubuntu-latest
