@@ -10,7 +10,6 @@ on:
       - auto_merge_enabled
     branches:
       - master # 正式版本
-      - priview # 预览标签
   push:
     branches:
       - 'priview/**'
