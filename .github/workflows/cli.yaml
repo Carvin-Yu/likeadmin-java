@@ -1,36 +1,28 @@
-name: CI 自动测试提交
+name: CI PR Merged
 # 该脚本仅在 PR MERGE 的时候进行测试，不建议 将测试结果上传到 github
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
 on:
   pull_request:
     branches:
       - master # 正式版本
+  push:
   workflow_dispatch: # 手动触发
 
+permissions: write-all # 给所有工作写权限
+
 jobs:
-  job1:
-    name: 测试
+  like_admin:
+    name: 编译后端
     runs-on: ubuntu-latest
     steps:
-      - name: 打印 pr 属性
+      - name: 获取代码
+        uses: actions/checkout@v4
+      - name: test
+        if: github.event_name == 'pull_request'
         run: |
-          echo github.event.pull_request.state: ${{ github.event.pull_request.state }}
-          echo github.event.action: ${{ github.event.action }}
-          echo test
-          echo test1
-  job3:
-  # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
-    name: merge test
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo The PR was merged
-  job4:
-  # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
-    name: review test
-    if: github.event.pull_request.review == true
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo The PR 回退
+          echo "This is a pull request"
+          if [ "${{ github.event.pull_request.merge_commit_sha }}" != "" ]; then
+            echo "This PR includes a merge"
+          else
+            echo "This PR does not include a merge"
+          fi
