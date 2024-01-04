@@ -22,7 +22,7 @@ jobs:
       - name: 获取代码
         uses: actions/checkout@v4
         with:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-          GITHUB_TOKEN1: ${{ github.token }}
-          GITHUB_TOKEN2: ${{ env.GITHUB_TOKEN }}
-          GITHUB_TOKEN3: ${{ GITHUB_TOKEN }}
+          GITHUB_TOKEN: "${{ secrets.TOKEN_GITHUB }}"
+          GITHUB_TOKEN1: "${{ github.token }}"
+          GITHUB_TOKEN2: "${{ env.GITHUB_TOKEN }}"
+          GITHUB_TOKEN3: "${{ GITHUB_TOKEN }}"
