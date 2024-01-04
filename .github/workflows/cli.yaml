@@ -12,7 +12,7 @@ on:
 permissions: write-all
 
 env:
-  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }} || ${{ github.token }}
+  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
 
 jobs:
   like_admin:
@@ -82,6 +82,10 @@ jobs:
       - name: 获取代码
         uses: actions/checkout@v4
 
+      - run: |
+          if [ env.GITHUB_TOKEN == '' ]; then
+            env.GITHUB_TOKEN = ${{ github.token }}
+          fi
       - name: 通知
         uses: thollander/actions-comment-pull-request@v2
         with:
