@@ -17,12 +17,97 @@ jobs:
     steps:
       - name: 获取代码
         uses: actions/checkout@v4
-      - name: test
-        if: github.event_name == 'pull_request'
+
+      - name: 设置 java 环境
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: 编译
         run: |
-          echo "This is a pull request"
-          if [ "${{ github.event.pull_request.merge_commit_sha }}" != "" ]; then
-            echo "This PR includes a merge"
-          else
-            echo "This PR does not include a merge"
-          fi
+          cd ./server
+          mvn clean install -Dmaven.test.skip=true -f pom.xml
+          find ${PWD} -name "*.jar" -exec zip -j like-admin.zip {} +
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          name: like-admin.zip
+          path: server/like-admin.zip
+          retention-days: 5
+
+  uniapp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v4
+
+      - name: 设置 node 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: 打包
+        run: |
+          cd ./uniapp
+          npm install
+          npm run build:h5
+          cd ..
+          zip -rj uniapp.zip ./h5
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        id: artifact-upload-step
+        with:
+          name: uniapp.zip
+          path: uniapp.zip
+          retention-days: 5
+
+      - name: Output artifact URL
+        run: echo "Artifact URL is ${{ steps.artifact-upload-step.outputs.artifact-url }}"
+
+  Make_Release:
+    # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
+    needs: [ like_admin, uniapp ]
+    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
+    name: 发布编译好的软件
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v4
+
+      - name: 下载
+        uses: actions/download-artifact@v4
+        with:
+          path: ./
+          merge-multiple: true
+
+      - name: 解压
+        run: |
+          unzip like-admin.zip -d ./dist
+          mv uniapp.zip ./dist
+
+      - name: 通知
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: 'This is an automatic message. This PR appears to change some of the visual tests.
+            Please carefully review the new visual test results in the uploaded artifact that can be found
+            [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})'
+          comment_tag: execution
+          continue-on-error: true
+
+      - name: 生成版本号
+        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+
+      - name: 发布
+        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "dist/**/*.dmg"
+          body: "Update ${{ steps.get-version.outputs.version }}"
+          name: "Release ${{ steps.tag_version.outputs.new_tag }}"
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          draft: false
