@@ -84,7 +84,6 @@ jobs:
             Please carefully review the new visual test results in the uploaded artifact that can be found
             [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})'
           comment_tag: execution
-          continue-on-error: true
 
       - name: 下载
         if: github.event.pull_request.merged == true
