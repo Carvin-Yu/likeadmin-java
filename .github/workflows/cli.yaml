@@ -2,14 +2,17 @@ name: CI PR Merged
 # 该脚本仅在 PR MERGE 的时候进行测试，不建议 将测试结果上传到 github
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
 
-permissions: write-all # 给所有工作写权限
-
 on:
   pull_request:
     branches:
       - master # 正式版本
   push:
   workflow_dispatch: # 手动触发
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
 
 jobs:
   like_admin:
