@@ -13,6 +13,7 @@ permissions:
   pull-requests: write
   actions: write
   contents: read
+  issues: write
 
 jobs:
   like_admin:
