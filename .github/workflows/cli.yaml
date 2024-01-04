@@ -77,17 +77,6 @@ jobs:
       - name: 获取代码
         uses: actions/checkout@v4
 
-      - name: 下载
-        uses: actions/download-artifact@v4
-        with:
-          path: ./
-          merge-multiple: true
-
-      - name: 解压
-        run: |
-          unzip like-admin.zip -d ./dist
-          mv uniapp.zip ./dist
-
       - name: 通知
         uses: thollander/actions-comment-pull-request@v2
         with:
@@ -96,6 +85,19 @@ jobs:
             [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})'
           comment_tag: execution
           continue-on-error: true
+
+      - name: 下载
+        if: github.event.pull_request.merged == true
+        uses: actions/download-artifact@v4
+        with:
+          path: ./
+          merge-multiple: true
+
+      - name: 解压
+        if: github.event.pull_request.merged == true
+        run: |
+          unzip like-admin.zip -d ./dist
+          mv uniapp.zip ./dist
 
       - name: 生成版本号
         if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
