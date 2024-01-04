@@ -10,7 +10,7 @@ on:
   workflow_dispatch: # 手动触发
 
 env:
-  GITHUB_TOKEN: ${{ github.token }}
+  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
 
 permissions: write-all
 
@@ -21,7 +21,6 @@ jobs:
     steps:
       - name: 获取代码
         uses: actions/checkout@v4
-        with:
-          GITHUB_TOKEN: "${{ secrets.TOKEN_GITHUB }}"
-          GITHUB_TOKEN1: "${{ github.token }}"
-          GITHUB_TOKEN2: "${{ env.GITHUB_TOKEN }}"
+      - run: |
+          echo ${{ env.GITHUB_TOKEN }}
+          echo ${{ github.token }}
