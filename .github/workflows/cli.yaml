@@ -11,7 +11,7 @@ on:
 
 permissions:
   checks: write
-  contents: read
+  contents: write
   issues: write
   actions: write
   pull-requests: write
