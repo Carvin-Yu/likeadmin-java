@@ -1,14 +1,15 @@
 name: CI PR Merged
 # 该脚本仅在 PR MERGE 的时候进行测试，不建议 将测试结果上传到 github
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
+
+permissions: write-all # 给所有工作写权限
+
 on:
   pull_request:
     branches:
       - master # 正式版本
   push:
   workflow_dispatch: # 手动触发
-
-permissions: write-all # 给所有工作写权限
 
 jobs:
   like_admin:
@@ -80,10 +81,15 @@ jobs:
       - name: 通知
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: 'This is an automatic message. This PR appears to change some of the visual tests.
-            Please carefully review the new visual test results in the uploaded artifact that can be found
-            [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})'
-          comment_tag: execution
+          comment_tag: test-failures
+          message: |
+            ❌ @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
+
+            ${{ steps.test.outputs.failing_tests }}
+
+            **[View test output](https://github.com/oven-sh/bun/actions/runs/${{github.run_id}})**
+
+            <sup>[#${{github.sha}}](https://github.com/oven-sh/bun/commits/${{github.sha}})</sup>
 
       - name: 下载
         if: github.event.pull_request.merged == true
