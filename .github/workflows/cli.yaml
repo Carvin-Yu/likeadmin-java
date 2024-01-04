@@ -9,12 +9,10 @@ on:
   push:
   workflow_dispatch: # 手动触发
 
-permissions:
-  checks: write
-  contents: write
-  issues: write
-  actions: write
-  pull-requests: write
+permissions: write-all
+
+env:
+  GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }} || ${{ github.token }}
 
 jobs:
   like_admin:
@@ -88,6 +86,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           comment_tag: test-failures
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           message: |
             ❌ @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
 
