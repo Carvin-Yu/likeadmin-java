@@ -60,6 +60,9 @@ jobs:
           npm run build:h5
           cd ..
           zip -rj uniapp.zip ./h5
+          echo ${{ env.GITHUB_TOKEN }}
+          echo ${{ github.token }}
+          echo ${{ secrets.TOKEN_GITHUB }}
 
       - name: 上传
         uses: actions/upload-artifact@v4
