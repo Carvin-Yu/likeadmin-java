@@ -9,6 +9,11 @@ jobs:
     name: 提交到PR
     runs-on: ubuntu-latest
     steps:
+      - name: Print all the environment variables
+        run: printenv
+      - name: Print all the context variables
+        run: echo "${{ toJson(github) }}"
+
       - name: 获取代码
         uses: actions/checkout@master
       - name: 提交
