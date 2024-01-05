@@ -72,7 +72,7 @@ jobs:
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
     needs: [ like_admin, uniapp ]
-    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
+    if: github.event_name == 'pull_request' && (github.event.pull_request.merge_commit_sha != '' || github.event.pull_request.merged == true)
     name: 发布编译好的软件
     runs-on: ubuntu-latest
     steps:
@@ -115,7 +115,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "dist/**"
-          body: "Update ${{ steps.tag_version.outputs.version }}"
+          body: "Update ${{ steps.tag_version.outputs.new_tag }}"
           name: "Release ${{ steps.tag_version.outputs.new_tag }}"
           tag_name: "${{ steps.tag_version.outputs.new_tag }}"
           draft: false
@@ -145,6 +145,6 @@ jobs:
             <sup>[**提交信息**](https://github.com/${{ github.repository }}/commits/${{ github.sha }})</sup>
             
             <br>
-            > Automated changes by [pre-commit](${{ github.action_path }}) action
+            > Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.action_path }}.yaml) action
           edit-mode: replace
           reactions-edit-mode: replace
