@@ -6,6 +6,10 @@ on:
   pull_request:
     branches:
       - master # 正式版本
+    types:
+      - closed
+      - opened
+      - synchronize
   workflow_dispatch: # 手动触发
 
 permissions: write-all
