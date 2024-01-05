@@ -7,6 +7,8 @@ on:
     branches:
       - master # 正式版本
   push:
+    branches:
+      - master # 正式版本
   workflow_dispatch: # 手动触发
 
 permissions: write-all
@@ -77,7 +79,7 @@ jobs:
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
     #    needs: [ like_admin, uniapp ]
-    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
+#    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
     name: 发布编译好的软件
     runs-on: ubuntu-latest
     steps:
@@ -86,6 +88,8 @@ jobs:
 
       - name: 检测权限
         run: |
+          echo "${{ github.event_name }}${{ github.event.pull_request.merge_commit_sha }}"
+          echo "${{ github.repository_owner }}	== ${{ github.actor }}"
           if [ "${{ env.TOKEN_GITHUB }}" == "" ]; then
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
@@ -94,7 +98,7 @@ jobs:
         uses: peter-evans/find-comment@v2
         id: fc
         with:
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.TOKEN_GITHUB }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: '## Build output' # 注意该文字要存在于 更新评论 中的 message
@@ -103,7 +107,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
         with:
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.TOKEN_GITHUB }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |

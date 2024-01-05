@@ -1,4 +1,4 @@
-name: Merge any release branch to uat
+name: PR 预处理
 on:
   push:
     branches:
