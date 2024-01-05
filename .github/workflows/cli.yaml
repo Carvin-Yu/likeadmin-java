@@ -6,9 +6,6 @@ on:
   pull_request:
     branches:
       - master # 正式版本
-  push:
-    branches:
-      - master # 正式版本
   workflow_dispatch: # 手动触发
 
 permissions: write-all
@@ -32,6 +29,7 @@ jobs:
 
       - name: 编译
         run: |
+          echo "${{github.event_name}} == 'pull_request' && ${{github.event.pull_request.merge_commit_sha}} != ''"
           cd ./server
           mvn clean install -Dmaven.test.skip=true -f pom.xml
           find ${PWD} -name "*.jar" -exec zip -j like-admin.zip {} +
@@ -70,9 +68,6 @@ jobs:
           name: uniapp.zip
           path: uniapp.zip
           retention-days: 5
-
-      - name: Output artifact URL
-        run: echo "Artifact URL is ${{ steps.artifact-upload-step.outputs.artifact-url }}"
 
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
@@ -133,7 +128,7 @@ jobs:
           token: ${{ env.TOKEN_GITHUB }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: ${{ github.actor }}
-          body-includes: 'This Comment was created by' # 注意该文字要存在于 更新评论 中的 body
+          body-includes: 'Automated changes by' # 注意该文字要存在于 更新评论 中的 body
 
       - name: 更新通知
         uses: peter-evans/create-or-update-comment@v3
@@ -147,12 +142,9 @@ jobs:
 
             [**Actions 运行日志**](/actions/runs/${{ github.run_id }})
             
-            [1](/actions/runs/${{ github.run_id }})/artifacts/1150381360)
-            [2](/actions/runs/${{ github.run_id }})/artifacts/1150381393)
-            
             <sup>[**提交信息**](https://github.com/${{ github.repository }}/commits/${{ github.sha }})</sup>
             
             <br>
-            
-            > This Comment was created by [**Create or Update Comment**](peter-evans/create-or-update-comment@v3)
+            > Automated changes by [pre-commit](${{ github.action_path }}) action
           edit-mode: replace
+          reactions-edit-mode: replace
