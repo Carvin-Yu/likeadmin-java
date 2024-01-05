@@ -40,7 +40,7 @@
 一键生成前后端业务代码，大大提示开发效率。<br>
 ## 界面预览
 ### 🖥️后台页面
-![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=9cf02b831e49d6a411bafbc4d79f51d4)<br>
+![](https://md.likeshop.cn//index.php?s=/api/attachment/visitFile&sign=9cf02b831e49d6a411bafbc4d79f51d4)<br>
 ![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=eb83547d55b4f41f0d92fd6a3e01d87e)
 ![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=818d843fb9cba396226e32dad1a58f3c)<br>
 ![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=194ab31919cd4dd619e6c453d7a44304)<br>
