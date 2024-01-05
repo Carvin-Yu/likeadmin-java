@@ -7,6 +7,8 @@ on:
     branches:
       - master # 正式版本
   push:
+    branches:
+      - master # 正式版本
   workflow_dispatch: # 手动触发
 
 permissions: write-all
@@ -87,6 +89,7 @@ jobs:
       - name: 检测权限
         run: |
           echo "${{ github.event_name }}${{ github.event.pull_request.merge_commit_sha }}"
+          echo "${{ github.repository_owner }}	== ${{ github.actor }}"
           if [ "${{ env.TOKEN_GITHUB }}" == "" ]; then
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
