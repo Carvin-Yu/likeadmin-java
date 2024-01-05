@@ -19,4 +19,4 @@ jobs:
           delete-branch: true
           base: master
           branch: ${{ github.ref }}
-          body: "Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.action_path }}.yaml) action"
+          body: "Automated changes by [pre-commit](../blob/master/.github/workflows/{{ github.action_path }}.yaml) action"
