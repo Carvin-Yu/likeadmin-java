@@ -5,11 +5,13 @@ on:
       - 'feature/**'
 jobs:
   merge-branch:
+    name: 提交到PR
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged != true
     steps:
-      - uses: actions/checkout@master
-      - name: Create Pull Request
+      - name: 获取代码
+        uses: actions/checkout@master
+      - name: 提交
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.TOKEN_GITHUB }}
