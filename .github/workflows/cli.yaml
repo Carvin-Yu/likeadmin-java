@@ -20,7 +20,6 @@ jobs:
   like_admin:
     name: 编译后端
     runs-on: ubuntu-latest
-    if: 1 == 2
     steps:
       - name: 获取代码
         uses: actions/checkout@v4
@@ -47,7 +46,6 @@ jobs:
   uniapp:
     runs-on: ubuntu-latest
     name: 编译前端
-    if: 1 == 2
     steps:
       - name: 获取代码
         uses: actions/checkout@v4
@@ -79,7 +77,7 @@ jobs:
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
     #    needs: [ like_admin, uniapp ]
-#    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
+    #    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
     name: 发布编译好的软件
     runs-on: ubuntu-latest
     steps:
@@ -100,8 +98,8 @@ jobs:
         with:
           token: ${{ env.TOKEN_GITHUB }}
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '## Build output' # 注意该文字要存在于 更新评论 中的 message
+          comment-author: ${{ github.actor }}
+          body-includes: 'This Comment was created by' # 注意该文字要存在于 更新评论 中的 body
 
       - name: 更新通知
         uses: peter-evans/create-or-update-comment@v3
@@ -111,16 +109,16 @@ jobs:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
+            @${{ github.actor }} 🌹🌹🌹
 
-            ${{ steps.test.outputs.failing_tests }}
-
-            **[View test output](https://github.com/oven-sh/bun/actions/runs/${{github.run_id}})**
-
-            <sup>[#${{github.sha}}](https://github.com/oven-sh/bun/commits/${{github.sha}})</sup>
+            [**Actions 运行日志**](/actions/runs/${{ github.run_id }})
             
-            ## Build output
-            ${{ steps.build.outputs.build-log }}
+            <sup>[**提交信息**](https://github.com/${{ github.repository }}/commits/${{ github.sha }})</sup>
+            
+            <br>
+                      
+            > This Comment was created by [**Create or Update Comment**](peter-evans/create-or-update-comment@v3)
+
 
       - name: 下载
         if: github.event.pull_request.merged == true
