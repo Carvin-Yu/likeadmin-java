@@ -76,8 +76,8 @@ jobs:
 
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
-    #    needs: [ like_admin, uniapp ]
-    #    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
+    needs: [ like_admin, uniapp ]
+    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
     name: 发布编译好的软件
     runs-on: ubuntu-latest
     steps:
@@ -86,8 +86,6 @@ jobs:
 
       - name: 检测权限
         run: |
-          echo "${{ github.event_name }}${{ github.event.pull_request.merge_commit_sha }}"
-          echo "${{ github.repository_owner }}	== ${{ github.actor }}"
           if [ "${{ env.TOKEN_GITHUB }}" == "" ]; then
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
@@ -116,7 +114,7 @@ jobs:
             <sup>[**提交信息**](https://github.com/${{ github.repository }}/commits/${{ github.sha }})</sup>
             
             <br>
-                      
+            
             > This Comment was created by [**Create or Update Comment**](peter-evans/create-or-update-comment@v3)
 
 
