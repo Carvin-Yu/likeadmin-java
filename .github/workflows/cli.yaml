@@ -84,7 +84,6 @@ jobs:
 
       - name: 检测权限
         run: |
-          echo "${{github.event_name}} == 'workflow_dispatch' || (${{github.event_name}} == 'pull_request' && (${{github.event.pull_request.merge_commit_sha}} != '' || ${{github.event.pull_request.merged }}== true))"
           if [ "${{ env.TOKEN_GITHUB }}" == "" ]; then
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
@@ -102,8 +101,8 @@ jobs:
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         run: |
           echo "${{ steps.download-artifact.outputs.artifacts }}" # TODO
-          echo "${{ steps.download-artifact.outputs }}" # TODO
-          echo "${{ steps.download-artifact }}" # TODO
+          echo "${{ steps.download-artifact.outputs }}" | jq . # TODO
+          echo "${{ steps.download-artifact }}" | jq .
           unzip like-admin.zip -d ./dist
           mv uniapp.zip ./dist
 
@@ -143,6 +142,7 @@ jobs:
             
             > Automated changes by cli action"
           fi
+          echo $str
 
       - name: 发布
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
