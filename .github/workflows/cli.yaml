@@ -103,9 +103,6 @@ jobs:
       - name: 解压
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         run: |
-          echo "${{ steps.download-artifact.outputs.artifacts }}"
-          echo "${{ steps.download-artifact.outputs }}" | jq .
-          echo "${{ steps.download-artifact }}" | jq .
           unzip like-admin.zip -d ./dist
           mv uniapp.zip ./dist
 
