@@ -3,12 +3,14 @@ on:
   push:
     branches:
       - 'feature/**'
+    tags-ignore:
+      - '*'
 
 jobs:
   merge-branch:
     name: 提交到PR
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged != true
+    if: github.ref_type != 'branch'
     steps:
       - name: 获取代码
         uses: actions/checkout@master
