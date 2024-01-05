@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - 'feature/**'
+  pull_request:
+    types: []
+
 jobs:
   merge-branch:
     name: 提交到PR
