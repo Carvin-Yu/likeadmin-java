@@ -95,6 +95,7 @@ jobs:
         with:
           comment_tag: test-failures
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
           message: |
             @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
 
