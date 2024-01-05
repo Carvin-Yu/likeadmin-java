@@ -57,6 +57,7 @@ jobs:
 
   like_admin:
     name: 编译后端
+    needs: clean_msg
     runs-on: ubuntu-latest
     steps:
       - name: 获取代码
@@ -106,6 +107,7 @@ jobs:
 
   uniapp:
     runs-on: ubuntu-latest
+    needs: clean_msg
     name: 编译前端
     steps:
       - name: 获取代码
