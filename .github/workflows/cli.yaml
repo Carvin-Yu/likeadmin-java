@@ -82,8 +82,9 @@ jobs:
       - name: 获取代码
         uses: actions/checkout@v4
 
-      - run: |
-          if [ {{ env.TOKEN_GITHUB }} == '' ]; then
+      - name: 检测权限
+        run: |
+          if [ ${{ env.TOKEN_GITHUB }} == '' ]; then
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
           fi
