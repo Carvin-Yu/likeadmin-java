@@ -1,36 +1,134 @@
 name: CI PR Merged
 # 该脚本仅在 PR MERGE 的时候进行测试，不建议 将测试结果上传到 github
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
+
 on:
   pull_request:
     branches:
       - master # 正式版本
+  push:
   workflow_dispatch: # 手动触发
 
+permissions: write-all
+
+env:
+  TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }} # TODO 请在 secrets 中设置 TOKEN_GITHUB 并且 TOKEN 有权限发布 release & tag & pr & issue
+
 jobs:
-  job1:
-    name: 测试
+  like_admin:
+    name: 编译后端
     runs-on: ubuntu-latest
     steps:
-      - name: 打印 pr 属性
+      - name: 获取代码
+        uses: actions/checkout@v4
+
+      - name: 设置 java 环境
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: 编译
         run: |
-          echo github.event.pull_request.state: ${{ github.event.pull_request.state }}
-          echo github.event.action: ${{ github.event.action }}
-          echo test
-          echo test1
-  job3:
-  # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
-    name: merge test
-    if: github.event.pull_request.merged == true
+          cd ./server
+          mvn clean install -Dmaven.test.skip=true -f pom.xml
+          find ${PWD} -name "*.jar" -exec zip -j like-admin.zip {} +
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          name: like-admin.zip
+          path: server/like-admin.zip
+          retention-days: 5
+
+  uniapp:
+    runs-on: ubuntu-latest
+    name: 编译前端
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v4
+
+      - name: 设置 node 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: 打包
+        run: |
+          cd ./uniapp
+          npm install
+          npm run build:h5
+          cd ..
+          zip -rj uniapp.zip ./h5
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        id: artifact-upload-step
+        with:
+          name: uniapp.zip
+          path: uniapp.zip
+          retention-days: 5
+
+      - name: Output artifact URL
+        run: echo "Artifact URL is ${{ steps.artifact-upload-step.outputs.artifact-url }}"
+
+  Make_Release:
+    # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
+    needs: [ like_admin, uniapp ]
+    if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
+    name: 发布编译好的软件
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo The PR was merged
-  job4:
-  # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
-    name: review test
-    if: github.event.pull_request.review == true
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo The PR 回退
+      - name: 获取代码
+        uses: actions/checkout@v4
+
+      - run: |
+          if [ {{ env.TOKEN_GITHUB }} == '' ]; then
+            echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
+            echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
+          fi
+
+      - name: 通知
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment_tag: test-failures
+          GITHUB_TOKEN: ${{ GITHUB_TOKEN }}
+          message: |
+            @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
+
+            ${{ steps.test.outputs.failing_tests }}
+
+            **[View test output](https://github.com/oven-sh/bun/actions/runs/${{github.run_id}})**
+
+            <sup>[#${{github.sha}}](https://github.com/oven-sh/bun/commits/${{github.sha}})</sup>
+            
+            ## Build output
+            ${{ steps.build.outputs.build-log }}
+
+      - name: 下载
+        if: github.event.pull_request.merged == true
+        uses: actions/download-artifact@v4
+        with:
+          path: ./
+          merge-multiple: true
+
+      - name: 解压
+        if: github.event.pull_request.merged == true
+        run: |
+          unzip like-admin.zip -d ./dist
+          mv uniapp.zip ./dist
+
+      - name: 生成版本号
+        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+
+      - name: 发布
+        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "dist/**/*.dmg"
+          body: "Update ${{ steps.get-version.outputs.version }}"
+          name: "Release ${{ steps.tag_version.outputs.new_tag }}"
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          draft: false
