@@ -45,6 +45,28 @@ jobs:
           path: server/like-admin.zip
           retention-days: 5
 
+      - name: 查找通知
+        uses: peter-evans/find-comment@v2
+        if: github.repository_owner	== github.actor
+        id: fc
+        with:
+          token: ${{ env.TOKEN_GITHUB }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: ${{ github.actor }}
+          body-includes: 'Automated changes by' # 注意该文字要存在于 更新评论 中的 body
+
+      - name: 更新通知
+        uses: peter-evans/create-or-update-comment@v3
+        if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
+        with:
+          token: ${{ env.TOKEN_GITHUB }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: append
+          reactions-edit-mode: append
+          body: "✅: 编译后端成功"
+
+
   uniapp:
     runs-on: ubuntu-latest
     name: 编译前端
@@ -74,6 +96,27 @@ jobs:
           path: uniapp.zip
           retention-days: 5
 
+      - name: 查找通知
+        uses: peter-evans/find-comment@v2
+        if: github.repository_owner	== github.actor
+        id: fc
+        with:
+          token: ${{ env.TOKEN_GITHUB }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: ${{ github.actor }}
+          body-includes: 'Automated changes by' # 注意该文字要存在于 更新评论 中的 body
+
+      - name: 更新通知
+        uses: peter-evans/create-or-update-comment@v3
+        if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
+        with:
+          token: ${{ env.TOKEN_GITHUB }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: append
+          reactions-edit-mode: append
+          body: "✅: 编译前端成功"
+
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
     needs: [ like_admin, uniapp ]
@@ -90,8 +133,6 @@ jobs:
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
           fi
-
-
 
       - name: 下载
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
@@ -113,38 +154,6 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ env.TOKEN_GITHUB }}
-
-      - name: 生成文本
-        id: body
-        run: |
-          if [ github.event.pull_request.merged == true ]; then
-            str="👤: ${{ github.actor }} 
-            📦: ${{ steps.tag_version.outputs.new_tag }}
-            ✅: [Release](/${{ github.repository }}/releases/)
-            🛜: 
-              - [like-admin-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-admin-1.0.0.jar)
-              - [like-common-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-common-1.0.0.jar)
-              - [like-front-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-front-1.0.0.jar)
-              - [like-generator-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-generator-1.0.0.jar)
-              - [uniapp](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/uniapp.zip)
-            📔: 
-              - [**Actions 日志**](../actions/runs/${{ github.run_id }})
-              - [**提交信息**](../commits/${{ github.sha }})</sup>
-          
-            <br>
-          
-            > Automated changes by cli action"
-          else
-           str="👤: ${{ github.actor }} 
-            📦: ${{ steps.tag_version.outputs.new_tag }}
-            ✅: [Action](/${{ github.repository }}/actions/)
-            📔: [**commit**](../commits/${{ github.sha }})</sup>
-          
-            <br>
-          
-            > Automated changes by cli action"
-          fi
-          echo "::set-output name=str::$str"
 
       - name: 发布
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
@@ -173,6 +182,21 @@ jobs:
           token: ${{ env.TOKEN_GITHUB }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          body: ${{ steps.body.outputs.str }}
-          edit-mode: replace
-          reactions-edit-mode: replace
+          edit-mode: append
+          reactions-edit-mode: append
+          body: |
+            ✅: 通知加载完成
+            
+            👤: @${{ github.actor }} 
+            📦: ${{ steps.tag_version.outputs.new_tag }}
+            🛜: 
+              - [like-admin-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-admin-1.0.0.jar)
+              - [like-common-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-common-1.0.0.jar)
+              - [like-front-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-front-1.0.0.jar)
+              - [like-generator-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-generator-1.0.0.jar)
+              - [uniapp](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/uniapp.zip)
+            📔: 
+              - [**Actions 日志**](../actions/runs/${{ github.run_id }})
+              - [**提交信息**](../commits/${{ github.sha }})</sup>
+          
+            <br>
