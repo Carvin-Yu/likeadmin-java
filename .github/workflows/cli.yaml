@@ -25,6 +25,13 @@ jobs:
       - name: 获取代码
         uses: actions/checkout@v4
 
+      - name: 检查状态
+        run: |
+          if [ "${{ github.event.pull_request.state }}" == "closed" ] && [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+            echo "❌ PR 已经关闭"
+            exit 1
+          fi
+
       - name: 查找通知
         uses: peter-evans/find-comment@v2
         if: github.repository_owner	== github.actor
