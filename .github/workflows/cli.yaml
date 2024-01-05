@@ -93,7 +93,7 @@ jobs:
         if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
         with:
           comment_tag: test-failures
-          GITHUB_TOKEN: ${{ GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           message: |
             @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
 
