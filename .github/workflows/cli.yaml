@@ -37,6 +37,7 @@ jobs:
           mvn clean install -Dmaven.test.skip=true -f pom.xml
           find ${PWD} -name "*.jar" -exec zip -j like-admin.zip {} +
 
+
       - name: 上传
         uses: actions/upload-artifact@v4
         with:
@@ -64,6 +65,7 @@ jobs:
           cd ..
           zip -rj uniapp.zip ./h5
 
+
       - name: 上传
         uses: actions/upload-artifact@v4
         id: artifact-upload-step
@@ -89,6 +91,7 @@ jobs:
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
           fi
 
+
       - name: 下载
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         id: download-artifact
@@ -100,11 +103,12 @@ jobs:
       - name: 解压
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         run: |
-          echo "${{ steps.download-artifact.outputs.artifacts }}" # TODO
-          echo "${{ steps.download-artifact.outputs }}" | jq . # TODO
+          echo "${{ steps.download-artifact.outputs.artifacts }}"
+          echo "${{ steps.download-artifact.outputs }}" | jq .
           echo "${{ steps.download-artifact }}" | jq .
           unzip like-admin.zip -d ./dist
           mv uniapp.zip ./dist
+
 
       - name: 生成版本号
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
@@ -112,6 +116,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ env.TOKEN_GITHUB }}
+
       - name: 生成文本
         id: body
         run: |
@@ -142,7 +147,7 @@ jobs:
             
             > Automated changes by cli action"
           fi
-          echo $str
+
 
       - name: 发布
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
