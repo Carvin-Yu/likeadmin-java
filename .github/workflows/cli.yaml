@@ -115,7 +115,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "dist/**"
-          body: "Update ${{ steps.tag_version.outputs.version }}"
+          body: "Update ${{ steps.tag_version.outputs.new_tag }}"
           name: "Release ${{ steps.tag_version.outputs.new_tag }}"
           tag_name: "${{ steps.tag_version.outputs.new_tag }}"
           draft: false
