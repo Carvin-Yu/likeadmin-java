@@ -1,11 +1,15 @@
-name: CI PR Merged
+name: 编译测试
 # 该脚本仅在 PR MERGE 的时候进行测试，不建议 将测试结果上传到 github
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - master # 正式版本
+    types:
+      - opened
+      - synchronize
+      - closed
   push:
     branches:
       - master # 正式版本
