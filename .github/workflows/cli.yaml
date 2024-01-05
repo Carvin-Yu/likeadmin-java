@@ -51,7 +51,10 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           reactions-edit-mode: replace
-          body: "> Automated changes by cli action"
+          body: |
+            > Automated changes by cli action
+            >
+
   like_admin:
     name: 编译后端
     runs-on: ubuntu-latest
@@ -98,7 +101,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: append
           reactions-edit-mode: append
-          body: "✅ : 编译后端成功"
+          body: "✅  :  编译后端成功"
 
 
   uniapp:
@@ -149,7 +152,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: append
           reactions-edit-mode: append
-          body: "✅ : 编译前端成功"
+          body: "✅  :  编译前端成功"
 
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
@@ -219,19 +222,17 @@ jobs:
           edit-mode: append
           reactions-edit-mode: append
           body: |
-            ✅ : 通知加载完成
+            ✅  :  通知加载完成
             
-            👤 : @${{ github.actor }} 
-            📦 : ${{ steps.tag_version.outputs.new_tag }}
-            🛜 : 
+            👤  :  @${{ github.actor }} 
+            📦  :  ${{ steps.tag_version.outputs.new_tag }}
+            🛜  :  
               - [like-admin-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-admin-1.0.0.jar)
               - [like-common-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-common-1.0.0.jar)
               - [like-front-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-front-1.0.0.jar)
               - [like-generator-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-generator-1.0.0.jar)
               - [uniapp](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/uniapp.zip)
             
-            📔: 
+            📔 : 
               - [**Actions 日志**](../actions/runs/${{ github.run_id }})
               - [**提交信息**](../commits/${{ github.sha }})</sup>
-          
-            <br>
