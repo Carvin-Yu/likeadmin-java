@@ -3,13 +3,9 @@ name: 编译测试
 # 可以通过变量来判断，比如 PR close 的时候 发布 github release & tag
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - master # 正式版本
-    types:
-      - opened
-      - synchronize
-      - closed
   push:
     branches:
       - master # 正式版本
