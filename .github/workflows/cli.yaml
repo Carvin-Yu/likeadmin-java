@@ -90,6 +90,42 @@ jobs:
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
           fi
+
+      - name: 下载
+        if: github.event.pull_request.merged == true
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: ./
+          merge-multiple: true
+
+      - name: 解压
+        if: github.event.pull_request.merged == true
+        run: |
+          echo "${{ steps.download-artifact.outputs.artifacts }}" # TODO
+          echo "${{ steps.download-artifact.outputs }}" # TODO
+          echo "${{ steps.download-artifact }}" # TODO
+          unzip like-admin.zip -d ./dist
+          mv uniapp.zip ./dist
+
+      - name: 生成版本号
+        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ env.TOKEN_GITHUB }}
+
+      - name: 发布
+        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "dist/**"
+          body: "Update ${{ steps.tag_version.outputs.version }}"
+          name: "Release ${{ steps.tag_version.outputs.new_tag }}"
+          tag_name: "${{ steps.tag_version.outputs.new_tag }}"
+          draft: false
+          token: ${{ env.TOKEN_GITHUB }}
+
       - name: 查找通知
         uses: peter-evans/find-comment@v2
         id: fc
@@ -111,37 +147,12 @@ jobs:
 
             [**Actions 运行日志**](/actions/runs/${{ github.run_id }})
             
+            [1](/actions/runs/${{ github.run_id }})/artifacts/1150381360)
+            [2](/actions/runs/${{ github.run_id }})/artifacts/1150381393)
+            
             <sup>[**提交信息**](https://github.com/${{ github.repository }}/commits/${{ github.sha }})</sup>
             
             <br>
             
             > This Comment was created by [**Create or Update Comment**](peter-evans/create-or-update-comment@v3)
-
-
-      - name: 下载
-        if: github.event.pull_request.merged == true
-        uses: actions/download-artifact@v4
-        with:
-          path: ./
-          merge-multiple: true
-
-      - name: 解压
-        if: github.event.pull_request.merged == true
-        run: |
-          unzip like-admin.zip -d ./dist
-          mv uniapp.zip ./dist
-
-      - name: 生成版本号
-        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-
-      - name: 发布
-        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "dist/**/*.dmg"
-          body: "Update ${{ steps.get-version.outputs.version }}"
-          name: "Release ${{ steps.tag_version.outputs.new_tag }}"
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          draft: false
+          edit-mode: replace
