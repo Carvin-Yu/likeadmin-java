@@ -144,6 +144,7 @@ jobs:
           
             > Automated changes by cli action"
           fi
+          echo "::set-output name=str::$str"
 
       - name: 发布
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
