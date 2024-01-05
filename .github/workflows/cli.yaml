@@ -82,8 +82,9 @@ jobs:
       - name: 获取代码
         uses: actions/checkout@v4
 
-      - run: |
-          if [ {{ env.TOKEN_GITHUB }} == '' ]; then
+      - name: 检测权限
+        run: |
+          if [ "${{ env.TOKEN_GITHUB }}" == "" ]; then
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
           fi
@@ -93,7 +94,7 @@ jobs:
         if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
         with:
           comment_tag: test-failures
-          GITHUB_TOKEN: ${{ GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           message: |
             @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
 
