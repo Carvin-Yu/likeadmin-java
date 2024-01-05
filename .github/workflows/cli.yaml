@@ -9,7 +9,7 @@ on:
     types:
       - assigned
       - opened
-      - synchronize
+      - closed
   workflow_dispatch: # 手动触发
 
 permissions: write-all
