@@ -18,6 +18,7 @@ jobs:
   like_admin:
     name: 编译后端
     runs-on: ubuntu-latest
+    if: 1=2
     steps:
       - name: 获取代码
         uses: actions/checkout@v4
@@ -44,6 +45,7 @@ jobs:
   uniapp:
     runs-on: ubuntu-latest
     name: 编译前端
+    if: 1=2
     steps:
       - name: 获取代码
         uses: actions/checkout@v4
@@ -74,7 +76,7 @@ jobs:
 
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
-    needs: [ like_admin, uniapp ]
+#    needs: [ like_admin, uniapp ]
     if: github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha != ''
     name: 发布编译好的软件
     runs-on: ubuntu-latest
@@ -88,15 +90,23 @@ jobs:
             echo "TOKEN_GITHUB=${{ github.token }}" >> $GITHUB_ENV
             echo "❌ 未设置 secrets.TOKEN_GITHUB 密码"
           fi
+      - name: 查找通知
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          token: ${{ env.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '## Build output' # 注意该文字要存在于 更新评论 中的 message
 
-      - name: 通知
+      - name: 更新通知
         uses: peter-evans/create-or-update-comment@v3
         if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
         with:
-          comment_tag: test-failures
-          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          message: |
+          body: |
             @${{ github.actor }} ${{ steps.test.outputs.failing_tests_count }} files with test failures on ${{ matrix.tag }}:
 
             ${{ steps.test.outputs.failing_tests }}
