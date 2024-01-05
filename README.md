@@ -10,7 +10,7 @@
 ### 管理后台
 地址：https://demo-java.likeadmin.cn <br>
 账号：admin 密码：123456
-### 手机端uniapp前台
+### 手机端uniapp前台9999
 
 
 
