@@ -22,6 +22,37 @@ jobs:
     name: 编译后端
     runs-on: ubuntu-latest
     steps:
+      - name: 生成文本
+        id: body
+        run: |
+          if [ github.event.pull_request.merged == true ]; then
+            str="👤: ${{ github.actor }} 
+            📦: ${{ steps.tag_version.outputs.new_tag }}
+            ✅: [Release](/${{ github.repository }}/releases/)
+            🛜: 
+              - [like-admin-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-admin-1.0.0.jar)
+              - [like-common-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-common-1.0.0.jar)
+              - [like-front-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-front-1.0.0.jar)
+              - [like-generator-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-generator-1.0.0.jar)
+              - [uniapp](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/uniapp.zip)
+            📔: 
+              - [**Actions 日志**](../actions/runs/${{ github.run_id }})
+              - [**提交信息**](../commits/${{ github.sha }})</sup>
+
+            <br>
+
+            > Automated changes by cli action"
+          else
+           str="👤: ${{ github.actor }} 
+            📦: ${{ steps.tag_version.outputs.new_tag }}
+            ✅: [Action](/${{ github.repository }}/actions/)
+            📔: [**commit**](../commits/${{ github.sha }})</sup>
+
+            <br>
+
+            > Automated changes by cli action"
+          fi
+          echo $str
       - name: 获取代码
         uses: actions/checkout@v4
 
@@ -92,6 +123,7 @@ jobs:
           fi
 
 
+
       - name: 下载
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         id: download-artifact
@@ -105,7 +137,6 @@ jobs:
         run: |
           unzip like-admin.zip -d ./dist
           mv uniapp.zip ./dist
-
 
       - name: 生成版本号
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
@@ -130,21 +161,20 @@ jobs:
             📔: 
               - [**Actions 日志**](../actions/runs/${{ github.run_id }})
               - [**提交信息**](../commits/${{ github.sha }})</sup>
-            
+          
             <br>
-            
+          
             > Automated changes by cli action"
           else
            str="👤: ${{ github.actor }} 
             📦: ${{ steps.tag_version.outputs.new_tag }}
             ✅: [Action](/${{ github.repository }}/actions/)
             📔: [**commit**](../commits/${{ github.sha }})</sup>
-            
+          
             <br>
-            
+          
             > Automated changes by cli action"
           fi
-
 
       - name: 发布
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
