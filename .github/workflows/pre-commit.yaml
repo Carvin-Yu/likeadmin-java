@@ -6,6 +6,7 @@ on:
 jobs:
   merge-branch:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged != true
     steps:
       - uses: actions/checkout@master
       - name: Create Pull Request
@@ -16,4 +17,3 @@ jobs:
           base: master
           branch: ${{ github.ref }}
           body: "Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.action_path }}.yaml) action"
-#

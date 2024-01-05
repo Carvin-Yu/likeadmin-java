@@ -29,7 +29,6 @@ jobs:
 
       - name: 编译
         run: |
-          echo "${{github.event_name}} == 'pull_request' && ${{github.event.pull_request.merge_commit_sha}} != ''"
           cd ./server
           mvn clean install -Dmaven.test.skip=true -f pom.xml
           find ${PWD} -name "*.jar" -exec zip -j like-admin.zip {} +
@@ -72,7 +71,7 @@ jobs:
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
     needs: [ like_admin, uniapp ]
-    if: github.event_name == 'pull_request' && (github.event.pull_request.merge_commit_sha != '' || github.event.pull_request.merged == true)
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && (github.event.pull_request.merge_commit_sha != '' || github.event.pull_request.merged == true))
     name: 发布编译好的软件
     runs-on: ubuntu-latest
     steps:
@@ -87,7 +86,7 @@ jobs:
           fi
 
       - name: 下载
-        if: github.event.pull_request.merged == true
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         id: download-artifact
         uses: actions/download-artifact@v4
         with:
@@ -95,7 +94,7 @@ jobs:
           merge-multiple: true
 
       - name: 解压
-        if: github.event.pull_request.merged == true
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
         run: |
           echo "${{ steps.download-artifact.outputs.artifacts }}" # TODO
           echo "${{ steps.download-artifact.outputs }}" # TODO
@@ -104,14 +103,14 @@ jobs:
           mv uniapp.zip ./dist
 
       - name: 生成版本号
-        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ env.TOKEN_GITHUB }}
 
       - name: 发布
-        if: github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true # 只有被合并的 pr 才会 发布
         uses: softprops/action-gh-release@v1
         with:
           files: "dist/**"
@@ -140,9 +139,9 @@ jobs:
           body: |
             @${{ github.actor }} 🌹🌹🌹
 
-            [**Actions 运行日志**](/actions/runs/${{ github.run_id }})
+            [**Actions 运行日志**](../actions/runs/${{ github.run_id }})
             
-            <sup>[**提交信息**](https://github.com/${{ github.repository }}/commits/${{ github.sha }})</sup>
+            [**提交信息**](../commits/${{ github.sha }})</sup>
             
             <br>
             > Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.action_path }}.yaml) action
