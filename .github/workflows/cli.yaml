@@ -18,6 +18,33 @@ env:
   TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }} # TODO 请在 secrets 中设置 TOKEN_GITHUB 并且 TOKEN 有权限发布 release & tag & pr & issue
 
 jobs:
+  clean_msg:
+    name: 清理通知
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v4
+
+      - name: 查找通知
+        uses: peter-evans/find-comment@v2
+        if: github.repository_owner	== github.actor
+        id: fc
+        with:
+          token: ${{ env.TOKEN_GITHUB }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: ${{ github.actor }}
+          body-includes: 'Automated changes by' # 注意该文字要存在于 更新评论 中的 body
+
+      - name: 更新通知
+        uses: peter-evans/create-or-update-comment@v3
+        if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
+        with:
+          token: ${{ env.TOKEN_GITHUB }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          reactions-edit-mode: replace
+          body: "> Automated changes by cli action"
   like_admin:
     name: 编译后端
     runs-on: ubuntu-latest
@@ -64,7 +91,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: append
           reactions-edit-mode: append
-          body: "✅: 编译后端成功"
+          body: "✅ : 编译后端成功"
 
 
   uniapp:
@@ -115,7 +142,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: append
           reactions-edit-mode: append
-          body: "✅: 编译前端成功"
+          body: "✅ : 编译前端成功"
 
   Make_Release:
     # 该任务可在 merge 也就是 pr clone 的时候 进行上传任务 当然也可以合并成一个 cli
@@ -185,16 +212,17 @@ jobs:
           edit-mode: append
           reactions-edit-mode: append
           body: |
-            ✅: 通知加载完成
+            ✅ : 通知加载完成
             
-            👤: @${{ github.actor }} 
-            📦: ${{ steps.tag_version.outputs.new_tag }}
-            🛜: 
+            👤 : @${{ github.actor }} 
+            📦 : ${{ steps.tag_version.outputs.new_tag }}
+            🛜 : 
               - [like-admin-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-admin-1.0.0.jar)
               - [like-common-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-common-1.0.0.jar)
               - [like-front-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-front-1.0.0.jar)
               - [like-generator-1.0.0](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/like-generator-1.0.0.jar)
               - [uniapp](/${{ github.repository }}/releases/download/${{ steps.tag_version.outputs.new_tag }}/uniapp.zip)
+            
             📔: 
               - [**Actions 日志**](../actions/runs/${{ github.run_id }})
               - [**提交信息**](../commits/${{ github.sha }})</sup>
