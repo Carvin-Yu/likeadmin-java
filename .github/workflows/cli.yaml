@@ -94,7 +94,7 @@ jobs:
         uses: peter-evans/find-comment@v2
         id: fc
         with:
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.TOKEN_GITHUB }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: '## Build output' # 注意该文字要存在于 更新评论 中的 message
@@ -103,7 +103,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
         with:
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.TOKEN_GITHUB }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
