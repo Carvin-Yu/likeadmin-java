@@ -1,19 +1,14 @@
 name: PR 预处理
 on:
   push:
-#    branches:
-#      - 'feature/**'
+    branches:
+      - 'feature/**'
 
 jobs:
   merge-branch:
     name: 提交到PR
     runs-on: ubuntu-latest
     steps:
-      - name: Print all the environment variables
-        run: printenv
-      - name: Print all the context variables
-        run: echo "${{ toJson(github) }}"
-
       - name: 获取代码
         uses: actions/checkout@master
       - name: 提交
@@ -23,4 +18,4 @@ jobs:
           delete-branch: true
           base: master
           branch: ${{ github.ref }}
-          body: "Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.workflow }}.yaml) action"
+          body: "Automated changes by pre-commit action"

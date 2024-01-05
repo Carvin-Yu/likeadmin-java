@@ -150,6 +150,6 @@ jobs:
             
             <br>
             
-            > Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.action_path }}.yaml) action
+            > Automated changes by cli action
           edit-mode: replace
           reactions-edit-mode: replace
