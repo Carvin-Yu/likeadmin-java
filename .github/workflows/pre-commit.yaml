@@ -1,8 +1,8 @@
 name: PR 预处理
 on:
   push:
-    branches:
-      - 'feature/**'
+#    branches:
+#      - 'feature/**'
 
 jobs:
   merge-branch:
