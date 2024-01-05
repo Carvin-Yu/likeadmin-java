@@ -90,6 +90,7 @@ jobs:
 
       - name: 通知
         uses: peter-evans/create-or-update-comment@v3
+        if: github.repository_owner	== github.actor # 只有仓库拥有者才会收到通知
         with:
           comment_tag: test-failures
           GITHUB_TOKEN: ${{ GITHUB_TOKEN }}
