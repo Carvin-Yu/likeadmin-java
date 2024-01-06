@@ -7,7 +7,7 @@ on:
     branches:
       - master # 正式版本
     types:
-      - assigned
+      - synchronize
       - opened
       - closed
   workflow_dispatch: # 手动触发
