@@ -5,14 +5,14 @@
 <div align="center">4444
   <img  width="80%"  src="https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=9cf02b831e49d6a411bafbc4d79f51d4" /><br>
 </div>
- <br>5554
+ <br>5554333
 
 
 ## 👀体验5555
 ### 管理后台
 地址：https://demo-java.likeadmin.cn <br>
 账号：admin 密码：123456
-### 手机端uniapp前台
+### 手机端uniapp前台ssssss
 <img  width="40%"  src="https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=260c0869d9ba7e692b2db1e216078241" /><br>
 
 
@@ -29,7 +29,7 @@
 
 
 ### 🐙 后端架构方面
-1.服务端使用JAVA8开发，性能有突破性的提升。<br>
+1.服务端使用JAVA8开发，性能有突破性的提升。<br>AAA
 2.使用Spring Boot2.5框架，目前国内流行的JAVA框架，高性能、简单易用、文档齐全、支持Mave高级项目管理工具、支持Redis等。
 ### 🐹 前端架构方面
 #### 后台
@@ -42,7 +42,6 @@
 一键生成前后端业务代码，大大提示开发效率。<br>
 ## 界面预览
 ### 🖥️后台页面
-![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=9cf02b831e49d6a411bafbc4d79f51d4)<br>
 ![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=eb83547d55b4f41f0d92fd6a3e01d87e)
 ![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=818d843fb9cba396226e32dad1a58f3c)<br>
 ![](https://md.likeshop.cn/server/index.php?s=/api/attachment/visitFile&sign=194ab31919cd4dd619e6c453d7a44304)<br>
