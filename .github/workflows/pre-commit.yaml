@@ -3,17 +3,18 @@ on:
   push:
     branches:
       - 'feature/**'
+
 jobs:
   merge-branch:
+    name: 提交到PR
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: Create Pull Request
+      - name: 获取代码
+        uses: actions/checkout@master
+      - name: 提交
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.TOKEN_GITHUB }}
           delete-branch: true
           base: master
           branch: ${{ github.ref }}
-          body: "Automated changes by [pre-commit](../blob/master/.github/workflows/${{ github.action_path }}.yaml) action"
-#
